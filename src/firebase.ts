@@ -1,9 +1,11 @@
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from './config';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging'
+import { getInstallations, getId } from '@firebase/installations';
 
 const firebase = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebase);
+const installations = getInstallations(firebase);
 
 export { firebase, messaging };
 
@@ -12,9 +14,20 @@ export const requestForToken = () => {
       .then((currentToken) => {
         if (currentToken) {
           console.log('current token for client: ', currentToken);
-          return currentToken
+          return
         } else {
           console.log('No registration token available. Request permission to generate one.');
+        }
+      })
+      .then(() => {
+        return getId(installations)
+      })
+      .then(id => {
+        if (id) {
+          console.log('current installation id: ', id);
+        return id
+        } else {
+          console.log('No installation id.');
         }
       })
       .catch((err) => {
